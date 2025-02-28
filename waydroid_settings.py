@@ -1,7 +1,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from Code_wd import *
+from Bin.Code_wd import *
 import subprocess
 
 class Ui_MainWindow(object):
