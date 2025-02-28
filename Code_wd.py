@@ -6,7 +6,7 @@ class StartButton:
         self.button.clicked.connect(self.on_button_clicked)
 
     def on_button_clicked(self):
-        mark.execute_command('waydroid session start')
+        mark.execute_command(["waydroid",  "session", "start"])
 class StopButton:
     def __init__(self, button):
         self.button = button
@@ -21,7 +21,7 @@ class RestartButton:
         self.button.clicked.connect(self.on_button_clicked)
 
     def on_button_clicked(self):
-        mark.execute_command('waydroid session restart')
+        mark.execute_command(["waydroid",  "session", "stop"])
 class FreezeButton:
     def __init__(self, button):
 
@@ -30,9 +30,9 @@ class FreezeButton:
 
     def on_button_clicked(self):
         if self.button.isChecked():
-            mark.execute_command('waydroid contariner freeze')
+            mark.execute_command(["waydroid",  "container", "freeze"])
         else:
-            mark.execute_command('waydroid container freeze')
+            mark.execute_command(["waydroid",  "session", "unfreeze"])
 class mark:
     def execute_command(command):
         result = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
