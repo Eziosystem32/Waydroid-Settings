@@ -79,6 +79,8 @@ class Ui_MainWindow(object):
         self.label_4 = QtWidgets.QLabel(self.centralwidget)
         self.label_4.setGeometry(QtCore.QRect(30, 340, 241, 16))
         self.label_4.setObjectName("label_4")
+        self.label_4.setGeometry(QtCore.QRect(30, 340, 241, 16))
+        self.label_4.setObjectName("label_4")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 693, 22))
@@ -91,6 +93,22 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+        # Define a timer to periodically check the status
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(self.check_status)
+        self.timer.start(2000)  # Check every 2 seconds
+
+    def check_status(self):
+        # Command to check the status
+        command = ["waydroid", "status"]
+        result = subprocess.run(command, capture_output=True, text=True)
+        first_line = result.stdout.split('\n')[0]
+        # Update the label text based on the status
+        if "RUNNING" in first_line:
+            self.label_4.setText("Waydroid status: Running")
+        else:
+            self.label_4.setText("Waydroid status: Stopped")
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -113,35 +131,35 @@ class Ui_MainWindow(object):
         self.pushButton.setText(_translate("MainWindow", "OK"))
         self.pushButton_2.setText(_translate("MainWindow", "Cancel"))
         self.label_4.setText(_translate("MainWindow", "Waydroid status:"))
-
-
-
-
-    def check_status(self):
-        while self.checking:
-            # Command to check the status
-            command = ["waydroid", "status"]
-            result = subprocess.run(command, capture_output=True, text=True)
-            first_line = result.stdout.split('\n')[0]
-
-            # Update the label text based on the status
-            if "RUNNING" in first_line:
-                running = True
-                self.label_4.setText("Waydroid status: Running")
-            else:
-                running = False
-                self.label_4.setText("Waydroid status: Stopped")
-
+        # Command to check the status
+        command = ["waydroid", "status"]
+        result = subprocess.run(command, capture_output=True, text=True)
+        first_line = result.stdout.split('\n')[0]
+        # Update the label text based on the status
+        if "RUNNING" in first_line:
+            running = True
+            self.label_4.setText("Waydroid status: Running")
+        else:
+            running = False
+            self.label_4.setText("Waydroid status: Stopped")
             # Sleep for a while before checking again
-            time.sleep(2)
+            # Define a timer to periodically check the status
+            self.timer = QtCore.QTimer()
+            self.timer.timeout.connect(self.check_status)
+            self.timer.start(2000)  # Check every 2 seconds
 
 if __name__ == "__main__":
+    
     import sys
+    import threading
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
-    result = subprocess.run(["waydroid", "status"], capture_output=True, text=True)
+    status_thread = threading.Thread(target=ui.check_status)
+    status_thread.start()
+    status_thread = threading.Thread(target=ui.check_status)
+    ui.check_status()
     MainWindow.show()
     sys.exit(app.exec_())
   
